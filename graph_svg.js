@@ -23,45 +23,45 @@ function graph_svg(target)
     }
     
     this.timer = setInterval(function()
+    {
+        var nodes = flatten_graph(root);
+        var debug = '';
+
+        for (var i = 0; i < nodes.length; i ++)
         {
-            var nodes = flatten_graph(root);
-            var debug = '';
-
-            for (var i = 0; i < nodes.length; i ++)
+            var force = { x: 0, y: 0 };
+            for (var j = 0; j < nodes.length; j ++)
             {
-                var force = { x: 0, y: 0 };
-                for (var j = 0; j < nodes.length; j ++)
-                {
-                    var direction = 1;
-                    if (i == j)
-                        continue;
-                    if (nodes[i].children.indexOf(nodes[j]) != -1)
-                        continue;
-                        
-                    var dx = nodes[i].x - nodes[j].x;
-                    var dy = nodes[i].y - nodes[j].y;
-                    var dsq = (dx * dx + dy * dy);
-                    if (dsq == 0) dsq = 0.1; // avoid divide-by-zero
-                    var push = 0;
+                var direction = 1;
+                if (i == j)
+                    continue;
+                if (nodes[i].children.indexOf(nodes[j]) != -1)
+                    continue;
+                    
+                var dx = nodes[i].x - nodes[j].x;
+                var dy = nodes[i].y - nodes[j].y;
+                var dsq = (dx * dx + dy * dy);
+                if (dsq == 0) dsq = 0.1; // avoid divide-by-zero
+                var push = 0;
 
-                    if (nodes[j].children.indexOf(nodes[i]) != -1)
-                        push = -dsq / 50000;
-                    else
-                        push = 50 / dsq;
+                if (nodes[j].children.indexOf(nodes[i]) != -1)
+                    push = -dsq / 50000;
+                else
+                    push = 50 / dsq;
 
-                    force.x += dx * push;
-                    force.y += dy * push;
-                }
-                nodes[i].x += force.x;
-                nodes[i].y += force.y;
+                force.x += dx * push;
+                force.y += dy * push;
             }
+            nodes[i].x += force.x;
+            nodes[i].y += force.y;
+        }
 
-            $('#debug').html(debug);
-            
-            r.clear();
-            this.render(root);
-        },
-        100);
+        $('#debug').html(debug);
+        
+        r.clear();
+        this.render(root);
+    },
+    100);
     
     this.render(root);
 }
