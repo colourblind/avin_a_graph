@@ -1,12 +1,14 @@
-function graph_svg(source, target, settings)
+function graph_svg(target)
 {
     var r = Raphael(target, 500, 500);
-
+    
     var root = {x: 0, y: 0, children: []};
     root.children.push({x: 60, y: 0, children: []});
     root.children.push({x: 80, y: 0, children: []});
     root.children.push({x: 12, y: 100, children: []});
     root.children.push({x: 0, y: -20, children: []});
+    root.children[0].children.push({x: 0, y: 0, children: []});
+    root.children[0].children.push({x: 0, y: 0, children: []});
     
     this.render = function(e)
     {
