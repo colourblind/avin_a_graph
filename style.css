@@ -1,0 +1,27 @@
+#foo
+{
+    width: 400px;
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+}
+
+#foo ul
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+#foo li
+{
+    position: absolute;
+    border: 1px solid #000;
+    background-color: #f00;
+    width: 10px;
+    height: 10px;
+    text-indent: -6667px;
+    margin: 0;
+    padding: 0;
+}

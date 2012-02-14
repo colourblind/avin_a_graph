@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html>
+<head>
+
+<link rel="stylesheet" type="text/css" href="style.css" />
+
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="Raphael-min.js"></script>
+<script type="text/javascript" src="graph_svg.js"></script>
+
+<script type="text/javascript">
+
+var g;
+$(document).ready(function()
+{
+    g = graph_svg('', 'bar', '');
+});
+
+</script>
+
+</head>
+<body>
+
+<div id="debug"></div>
+
+<div id="bar">
+    <ul>
+        <li>Bar</li>
+        <li style="background-color: #0f0;">Foo</li>
+        <li style="background-color: #00f;">Baz</li>
+    </ul>
+    <a href="#">Move</a>
+</div>
+
+</body>
+</html>
