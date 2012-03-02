@@ -4,8 +4,8 @@ function graph_svg(target, nodes, edges)
  
     for (var i = 0; i < nodes.length; i ++)
     {
-        nodes[i].x = Math.random() * 10 - 5;
-        nodes[i].y = Math.random() * 10 - 5;
+        nodes[i].x = Math.random() * 30 - 15;
+        nodes[i].y = Math.random() * 30 - 15;
         nodes[i].force = { x: 0, y: 0 };
         nodes[i].size = 0;
         for (var j = 0; j < edges.length; j ++)
@@ -26,7 +26,7 @@ function graph_svg(target, nodes, edges)
         for (var i = 0; i < nodes.length; i ++)
         {
             var e = nodes[i];
-            var c = r.circle(e.x, e.y, e.size * 2 + 8).attr({stroke: '#000', fill: '#f0' + i}).translate(250, 250);
+            var c = r.circle(e.x, e.y, e.size * 2 + 8).attr({stroke: '#000', fill: '#f00'}).translate(250, 250);
             c.mouseover(function(event) { this.attr({fill: '#fff'}); });
             c.mouseout(function(event) { this.attr({fill: '#f00'}); });        
         }
@@ -38,19 +38,22 @@ function graph_svg(target, nodes, edges)
 
         for (var i = 0; i < nodes.length; i ++)
         {
-            for (var j = i + 1; j < nodes.length; j ++)
+            for (var j = 0; j < nodes.length; j ++)
             {
+                if (i == j)
+                    continue;
+            
                 var dx = nodes[i].x - nodes[j].x;
                 var dy = nodes[i].y - nodes[j].y;
                 var dsq = (dx * dx + dy * dy);
                 if (dsq == 0) dsq = 0.1; // avoid divide-by-zero
-                var push = 50 / dsq;
+                var push = 15 / dsq;
 
                 nodes[i].force.x += dx * push;
                 nodes[i].force.y += dy * push;
                 
                 nodes[j].force.x -= dx * push;
-                nodes[j].force.y -= dx * push;
+                nodes[j].force.y -= dy * push;
             }
             
             for (var j = 0; j < edges.length; j ++)
@@ -70,7 +73,7 @@ function graph_svg(target, nodes, edges)
                 nodes[a].force.y += dy * push;
                 
                 nodes[b].force.x -= dx * push;
-                nodes[b].force.y -= dx * push;
+                nodes[b].force.y -= dy * push;
             }
         }
 
