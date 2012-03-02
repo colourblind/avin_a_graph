@@ -38,16 +38,13 @@ function graph_svg(target, nodes, edges)
 
         for (var i = 0; i < nodes.length; i ++)
         {
-            for (var j = 0; j < nodes.length; j ++)
+            for (var j = i + 1; j < nodes.length; j ++)
             {
-                if (i == j)
-                    continue;
-            
                 var dx = nodes[i].x - nodes[j].x;
                 var dy = nodes[i].y - nodes[j].y;
                 var dsq = (dx * dx + dy * dy);
                 if (dsq == 0) dsq = 0.1; // avoid divide-by-zero
-                var push = 15 / dsq;
+                var push = 50 / dsq;
 
                 nodes[i].force.x += dx * push;
                 nodes[i].force.y += dy * push;
