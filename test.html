@@ -10,10 +10,19 @@
 
 <script type="text/javascript">
 
+var nodes = [ { name: 'foo' }, { name: 'bar' }, { name: 'baz' }, { name: 'kek' }, { name: 'bur' }, { name: 'test' } ];
+var edges = [ 
+    { a: 0, b: 1 },
+    { a: 0, b: 2 },
+    { a: 0, b: 3 },
+    { a: 1, b: 4 },
+    { a: 2, b: 5 },
+];
+
 var g;
 $(document).ready(function()
 {
-    g = graph_svg('bar');
+    g = graph_svg('bar', nodes, edges);
 });
 
 </script>
