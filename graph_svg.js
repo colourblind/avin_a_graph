@@ -28,8 +28,8 @@ function graph_svg(target, nodes, edges)
         {
             var e = nodes[i];
             var c = r.circle(e.x, e.y, e.size * 2 + 8).attr({stroke: '#000', fill: '#f00'}).translate(250, 250);
-            c.name = e.name;
-            c.mouseover(function(event) { this.attr({fill: '#fff'}); tooltip.innerHTML = this.name; tooltip.style.display = 'block'; });
+            c.id = e.id;
+            c.mouseover(function(event) { this.attr({fill: '#fff'}); tooltip.innerHTML = this.id; tooltip.style.display = 'block'; });
             c.mouseout(function(event) { this.attr({fill: '#f00'}); tooltip.style.display = 'none'; });        
         }
     }
