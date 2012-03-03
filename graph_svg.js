@@ -34,8 +34,6 @@ function graph_svg(target, nodes, edges)
     
     this.timer = setInterval(function()
     {
-        var debug = '';
-
         for (var i = 0; i < nodes.length; i ++)
         {
             for (var j = i + 1; j < nodes.length; j ++)
@@ -80,8 +78,6 @@ function graph_svg(target, nodes, edges)
             nodes[i].y += nodes[i].force.y;
             nodes[i].force.x = nodes[i].force.y = 0;
         }
-        
-        $('#debug').html(debug);
         
         r.clear();
         this.render();
