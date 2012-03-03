@@ -2,6 +2,18 @@ function graph_svg(target, nodes, edges)
 {
     var r = Raphael(target, 500, 500);
     var tooltip = document.getElementById('tooltip');
+    
+    // Change node ids for indexes in edge list
+    for (var i = 0; i < edges.length; i ++)
+    {
+        for (var j = 0; j < nodes.length; j ++)
+        {
+            if (edges[i].a == nodes[j].id)
+                edges[i].a = j
+            if (edges[i].b == nodes[j].id)
+                edges[i].b = j;
+        }
+    }
  
     for (var i = 0; i < nodes.length; i ++)
     {

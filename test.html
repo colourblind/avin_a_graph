@@ -26,22 +26,22 @@ var nodes = [
     { id: 'ringo' }
 ];
 var edges = [ 
-    { a: 0, b: 1 },
-    { a: 0, b: 2 },
-    { a: 0, b: 3 },
-    { a: 1, b: 4 },
-    { a: 2, b: 5 },
-    { a: 2, b: 6 },
-    { a: 2, b: 7 },
-    { a: 6, b: 7 },
-    { a: 7, b: 8 },
-    { a: 0, b: 9 },
-    { a: 1, b: 9 },
-    { a: 2, b: 10 },
-    { a: 10, b: 9 },
-    { a: 11, b: 9 },
-    { a: 12, b: 9 },
-    { a: 12, b: 10 }
+    { a: 'foo', b: 'bar' },
+    { a: 'foo', b: 'baz' },
+    { a: 'foo', b: 'kek' },
+    { a: 'bar', b: 'bur' },
+    { a: 'baz', b: 'test' },
+    { a: 'baz', b: '123' },
+    { a: 'baz', b: '456' },
+    { a: '123', b: '456' },
+    { a: '456', b: '789' },
+    { a: 'foo', b: 'john' },
+    { a: 'bar', b: 'john' },
+    { a: 'baz', b: 'paul' },
+    { a: 'paul', b: 'john' },
+    { a: 'george', b: 'john' },
+    { a: 'ringo', b: 'john' },
+    { a: 'ringo', b: 'paul' }
 ];
 
 var g;
