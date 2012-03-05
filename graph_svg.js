@@ -30,6 +30,8 @@ function graph_svg(target, nodes, edges)
     
     this.render = function()
     {
+        r.clear();
+    
         for (var i = 0; i < edges.length; i ++)
         {
             var a = nodes[edges[i].a];
@@ -44,9 +46,9 @@ function graph_svg(target, nodes, edges)
             c.mouseover(function(event) { this.attr({fill: '#fff'}); tooltip.innerHTML = this.id; tooltip.style.display = 'block'; });
             c.mouseout(function(event) { this.attr({fill: '#f00'}); tooltip.style.display = 'none'; });        
         }
-    }
+    };
     
-    this.timer = setInterval(function()
+    this.update = function()
     {
         for (var i = 0; i < nodes.length; i ++)
         {
@@ -92,8 +94,10 @@ function graph_svg(target, nodes, edges)
             nodes[i].y += nodes[i].force.y;
             nodes[i].force.x = nodes[i].force.y = 0;
         }
-        
-        r.clear();
+    };
+    
+    this.timer = setInterval(function() { 
+        this.update();
         this.render();
     },
     100);
