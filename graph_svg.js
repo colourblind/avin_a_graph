@@ -28,6 +28,8 @@ function graph_svg(target, nodes, edges)
         }
     }
     
+    this._stable = false;
+    
     this.render = function()
     {
         r.clear();
@@ -50,6 +52,9 @@ function graph_svg(target, nodes, edges)
     
     this.update = function()
     {
+        if (this._stable)
+            return;
+        
         for (var i = 0; i < nodes.length; i ++)
         {
             for (var j = i + 1; j < nodes.length; j ++)
@@ -87,13 +92,18 @@ function graph_svg(target, nodes, edges)
                 nodes[b].force.y -= dy * push;
             }
         }
+        
+        var totalSq = 0;
 
         for (var i = 0; i < nodes.length; i ++)
         {
+            totalSq = nodes[i].force.x * nodes[i].force.x + nodes[i].force.y * nodes[i].force.y;
             nodes[i].x += nodes[i].force.x;
             nodes[i].y += nodes[i].force.y;
             nodes[i].force.x = nodes[i].force.y = 0;
         }
+        
+        this._stable = totalSq < 0.01;
     };
     
     this.timer = setInterval(function() { 
