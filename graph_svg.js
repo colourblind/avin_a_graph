@@ -55,7 +55,7 @@ function graph_svg(target, nodes, edges)
     {
         var a = nodes[edges[i].a];
         var b = nodes[edges[i].b];
-        var c = r.path('M ' + a.x + ' ' + a.y + ' L ' + b.x + ' ' + b.y).attr({stroke: '#000', 'stroke-width': 2}).translate(250, 250);
+        var c = r.path('M ' + a.x + ' ' + a.y + ' L ' + b.x + ' ' + b.y).attr({stroke: '#000', 'stroke-width': 2}).translate(250, 250).toBack();
         edges[i].drawElement = c;
     }
     
@@ -115,13 +115,13 @@ function graph_svg(target, nodes, edges)
             var dsq = (dx * dx + dy * dy);
             var d = Math.sqrt(dsq);
             if (dsq > 0.01) dsq = 0.01; // avoid divide-by-zero
-            var push = -dsq * 200;
+            var push = -dsq * 500;
             
-            nodes[a].force.x += (dx / d) * push;
-            nodes[a].force.y += (dy / d) * push;
+            nodes[a].force.x += (dx / d) * push / nodes[a].size;
+            nodes[a].force.y += (dy / d) * push / nodes[a].size;
             
-            nodes[b].force.x -= (dx / d) * push;
-            nodes[b].force.y -= (dy / d) * push;
+            nodes[b].force.x -= (dx / d) * push / nodes[b].size;
+            nodes[b].force.y -= (dy / d) * push / nodes[b].size;
         }
         
         var totalSq = 0;
