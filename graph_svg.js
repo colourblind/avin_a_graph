@@ -17,50 +17,62 @@ function graph_svg(target, nodes, edges)
  
     for (var i = 0; i < nodes.length; i ++)
     {
-        nodes[i].x = Math.random() * 50 - 25;
-        nodes[i].y = Math.random() * 50 - 25;
-        nodes[i].force = { x: 0, y: 0 };
-        if (nodes[i].size === undefined)
+        var e = nodes[i];
+        e.x = Math.random() * 50 - 25;
+        e.y = Math.random() * 50 - 25;
+        e.force = { x: 0, y: 0 };
+        if (e.size === undefined)
         {
-            nodes[i].size = 0;
+            e.size = 0;
             for (var j = 0; j < edges.length; j ++)
             {
                 if (edges[j].a == i || edges[j].b == i)
-                    nodes[i].size ++;
+                    e.size ++;
             }
         }
-        if (nodes[i].colour === undefined)
-            nodes[i].colour = '#f00';
+        if (e.colour === undefined)
+            e.colour = '#f00';
+            
+        // Create Raphael element
+        var c = r.circle(e.x, e.y, e.size + 5).attr({stroke: '#000', fill: e.colour}).translate(250, 250);
+        c.id = e.id;
+        c.index = i;
+        c.drag(function(dx, dy) {
+            nodes[this.index].x = this.ox + dx;
+            nodes[this.index].y = this.oy + dy;
+        }, function() {
+            this.ox = nodes[this.index].x;
+            this.oy = nodes[this.index].y;
+            this.attr({fill: '#fff'});
+        }, function() {
+            this.attr({fill: nodes[this.index].colour});        
+        });
+        e.drawElement = c;
+    }
+    
+    // Iterate over edges a *second* time to set up the Raphael objects
+    for (var i = 0; i < edges.length; i ++)
+    {
+        var a = nodes[edges[i].a];
+        var b = nodes[edges[i].b];
+        var c = r.path('M ' + a.x + ' ' + a.y + ' L ' + b.x + ' ' + b.y).attr({stroke: '#000', 'stroke-width': 2}).translate(250, 250);
+        edges[i].drawElement = c;
     }
     
     this._stable = false;
     
     this.render = function()
     {
-        r.clear();
-    
         for (var i = 0; i < edges.length; i ++)
         {
             var a = nodes[edges[i].a];
             var b = nodes[edges[i].b];
-            r.path('M ' + a.x + ' ' + a.y + ' L ' + b.x + ' ' + b.y).attr({stroke: '#000', 'stroke-width': 2}).translate(250, 250);
+            edges[i].drawElement.attr('path', 'M ' + a.x + ' ' + a.y + ' L ' + b.x + ' ' + b.y);
         }
         for (var i = 0; i < nodes.length; i ++)
         {
-            var e = nodes[i];
-            var colour = nodes[i].colour;
-            var c = r.circle(e.x, e.y, e.size + 5).attr({stroke: '#000', fill: colour}).translate(250, 250);
-            c.id = e.id;
-            c.index = i;
-            c.drag(function(dx, dy) {
-                nodes[this.index].x = this.ox + dx;
-                nodes[this.index].y = this.oy + dy;
-                this.attr({fill: nodes[this.index].colour});
-            }, function() {
-                this.ox = nodes[this.index].x;
-                this.oy = nodes[this.index].y;
-                this.attr({fill: '#fff'});
-            });
+            nodes[i].drawElement.attr('cx', nodes[i].x);
+            nodes[i].drawElement.attr('cy', nodes[i].y);
         }
     };
     
@@ -122,7 +134,7 @@ function graph_svg(target, nodes, edges)
             nodes[i].force.x = nodes[i].force.y = 0;
         }
         
-        this._stable = totalSq < 0.0001;
+        //this._stable = totalSq < 0.0001;
     };
     
     this.timer = setInterval(function() { 
