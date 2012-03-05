@@ -51,8 +51,16 @@ function graph_svg(target, nodes, edges)
             var colour = nodes[i].colour;
             var c = r.circle(e.x, e.y, e.size + 5).attr({stroke: '#000', fill: colour}).translate(250, 250);
             c.id = e.id;
-            c.mouseover(function(event) { this.attr({fill: '#fff'}); tooltip.innerHTML = this.id; tooltip.style.display = 'block'; });
-            c.mouseout(function(event) { this.attr({fill: colour}); tooltip.style.display = 'none'; });        
+            c.index = i;
+            c.drag(function(dx, dy) {
+                nodes[this.index].x = this.ox + dx;
+                nodes[this.index].y = this.oy + dy;
+                this.attr({fill: nodes[this.index].colour});
+            }, function() {
+                this.ox = nodes[this.index].x;
+                this.oy = nodes[this.index].y;
+                this.attr({fill: '#fff'});
+            });
         }
     };
     
