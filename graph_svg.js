@@ -17,8 +17,8 @@ function graph_svg(target, nodes, edges)
  
     for (var i = 0; i < nodes.length; i ++)
     {
-        nodes[i].x = Math.random() * 30 - 15;
-        nodes[i].y = Math.random() * 30 - 15;
+        nodes[i].x = Math.random() * 50 - 25;
+        nodes[i].y = Math.random() * 50 - 25;
         nodes[i].force = { x: 0, y: 0 };
         if (nodes[i].size === undefined)
         {
@@ -49,7 +49,7 @@ function graph_svg(target, nodes, edges)
         {
             var e = nodes[i];
             var colour = nodes[i].colour;
-            var c = r.circle(e.x, e.y, e.size * 2 + 8).attr({stroke: '#000', fill: colour}).translate(250, 250);
+            var c = r.circle(e.x, e.y, e.size + 5).attr({stroke: '#000', fill: colour}).translate(250, 250);
             c.id = e.id;
             c.mouseover(function(event) { this.attr({fill: '#fff'}); tooltip.innerHTML = this.id; tooltip.style.display = 'block'; });
             c.mouseout(function(event) { this.attr({fill: colour}); tooltip.style.display = 'none'; });        
@@ -68,40 +68,40 @@ function graph_svg(target, nodes, edges)
                 var dx = nodes[i].x - nodes[j].x;
                 var dy = nodes[i].y - nodes[j].y;
                 var dsq = (dx * dx + dy * dy);
-                if (dsq == 0) dsq = 0.1; // avoid divide-by-zero
-                var push = 5 / dsq;
+                var d = Math.sqrt(dsq);
+                if (dsq > 1) dsq = 1; // avoid divide-by-zero
+                var push = 1 / dsq;
 
-                nodes[i].force.x += dx * push;
-                nodes[i].force.y += dy * push;
+                nodes[i].force.x += (dx / d) * push;
+                nodes[i].force.y += (dy / d) * push;
                 
-                nodes[j].force.x -= dx * push;
-                nodes[j].force.y -= dy * push;
-            }
-            
-            for (var j = 0; j < edges.length; j ++)
-            {
-                if (edges[j].a != i && edges[j].b != i)
-                    continue;
-                var a = edges[j].a;
-                var b = edges[j].b;
-                
-                var dx = nodes[a].x - nodes[b].x;
-                var dy = nodes[a].y - nodes[b].y;
-                var dsq = (dx * dx + dy * dy);
-                if (dsq == 0) dsq = 0.1; // avoid divide-by-zero
-                var push = -dsq / 50000;
-
-                nodes[a].force.x += dx * push;
-                nodes[a].force.y += dy * push;
-                
-                nodes[b].force.x -= dx * push;
-                nodes[b].force.y -= dy * push;
+                nodes[j].force.x -= (dx / d) * push;
+                nodes[j].force.y -= (dy / d) * push;
             }
             
             // Gentle pull to centre so we don't lose disconnected graphs/nodes
             var dsq = (nodes[i].x * nodes[i].x + nodes[i].y * nodes[i].y);
-            nodes[i].force.x -= nodes[i].x * (dsq / 300000);
-            nodes[i].force.y -= nodes[i].y * (dsq / 300000);
+            nodes[i].force.x -= nodes[i].x * (dsq / 300000) * nodes[i].size;
+            nodes[i].force.y -= nodes[i].y * (dsq / 300000) * nodes[i].size;
+        }
+        
+        for (var i = 0; i < edges.length; i ++)
+        {
+            var a = edges[i].a;
+            var b = edges[i].b;
+            
+            var dx = nodes[a].x - nodes[b].x;
+            var dy = nodes[a].y - nodes[b].y;
+            var dsq = (dx * dx + dy * dy);
+            var d = Math.sqrt(dsq);
+            if (dsq > 0.01) dsq = 0.01; // avoid divide-by-zero
+            var push = -dsq * 200;
+            
+            nodes[a].force.x += (dx / d) * push;
+            nodes[a].force.y += (dy / d) * push;
+            
+            nodes[b].force.x -= (dx / d) * push;
+            nodes[b].force.y -= (dy / d) * push;
         }
         
         var totalSq = 0;
@@ -114,7 +114,7 @@ function graph_svg(target, nodes, edges)
             nodes[i].force.x = nodes[i].force.y = 0;
         }
         
-        this._stable = totalSq < 0.005;
+        this._stable = totalSq < 0.0001;
     };
     
     this.timer = setInterval(function() { 
