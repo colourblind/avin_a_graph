@@ -20,12 +20,17 @@ function graph_svg(target, nodes, edges)
         nodes[i].x = Math.random() * 30 - 15;
         nodes[i].y = Math.random() * 30 - 15;
         nodes[i].force = { x: 0, y: 0 };
-        nodes[i].size = 0;
-        for (var j = 0; j < edges.length; j ++)
+        if (nodes[i].size === undefined)
         {
-            if (edges[j].a == i || edges[j].b == i)
-                nodes[i].size ++;
+            nodes[i].size = 0;
+            for (var j = 0; j < edges.length; j ++)
+            {
+                if (edges[j].a == i || edges[j].b == i)
+                    nodes[i].size ++;
+            }
         }
+        if (nodes[i].colour === undefined)
+            nodes[i].colour = '#f00';
     }
     
     this._stable = false;
@@ -43,10 +48,11 @@ function graph_svg(target, nodes, edges)
         for (var i = 0; i < nodes.length; i ++)
         {
             var e = nodes[i];
-            var c = r.circle(e.x, e.y, e.size * 2 + 8).attr({stroke: '#000', fill: '#f00'}).translate(250, 250);
+            var colour = nodes[i].colour;
+            var c = r.circle(e.x, e.y, e.size * 2 + 8).attr({stroke: '#000', fill: colour}).translate(250, 250);
             c.id = e.id;
             c.mouseover(function(event) { this.attr({fill: '#fff'}); tooltip.innerHTML = this.id; tooltip.style.display = 'block'; });
-            c.mouseout(function(event) { this.attr({fill: '#f00'}); tooltip.style.display = 'none'; });        
+            c.mouseout(function(event) { this.attr({fill: colour}); tooltip.style.display = 'none'; });        
         }
     };
     
