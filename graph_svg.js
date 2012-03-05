@@ -69,7 +69,7 @@ function graph_svg(target, nodes, edges)
                 var dy = nodes[i].y - nodes[j].y;
                 var dsq = (dx * dx + dy * dy);
                 if (dsq == 0) dsq = 0.1; // avoid divide-by-zero
-                var push = 50 / dsq;
+                var push = 5 / dsq;
 
                 nodes[i].force.x += dx * push;
                 nodes[i].force.y += dy * push;
@@ -97,6 +97,11 @@ function graph_svg(target, nodes, edges)
                 nodes[b].force.x -= dx * push;
                 nodes[b].force.y -= dy * push;
             }
+            
+            // Gentle pull to centre so we don't lose disconnected graphs/nodes
+            var dsq = (nodes[i].x * nodes[i].x + nodes[i].y * nodes[i].y);
+            nodes[i].force.x -= nodes[i].x * (dsq / 300000);
+            nodes[i].force.y -= nodes[i].y * (dsq / 300000);
         }
         
         var totalSq = 0;
@@ -109,7 +114,7 @@ function graph_svg(target, nodes, edges)
             nodes[i].force.x = nodes[i].force.y = 0;
         }
         
-        this._stable = totalSq < 0.01;
+        this._stable = totalSq < 0.005;
     };
     
     this.timer = setInterval(function() { 
