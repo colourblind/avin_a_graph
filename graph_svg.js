@@ -47,6 +47,8 @@ function graph_svg(target, nodes, edges)
         }, function() {
             this.attr({fill: nodes[this.index].colour});        
         });
+        c.mouseover(function() { tooltip.innerHTML = nodes[this.index].id; tooltip.style.display = 'block'; });
+        c.mouseout(function() { tooltip.style.display = 'none'; tooltip.innerHTML = ''; });
         e.drawElement = c;
     }
     
