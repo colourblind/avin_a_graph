@@ -94,19 +94,20 @@ function graph_svg(target, nodes, edges)
                 var dsq = (dx * dx + dy * dy);
                 var d = Math.sqrt(dsq);
                 if (dsq > 1) dsq = 1; // avoid divide-by-zero
-                var push = 0.5 / dsq;
+                var push = 1 / dsq;
 
-                nodes[i].force.x += (dx / d) * push; // * nodes[j].size;
-                nodes[i].force.y += (dy / d) * push; // * nodes[j].size;
+                nodes[i].force.x += (dx / d) * push * nodes[j].size;
+                nodes[i].force.y += (dy / d) * push * nodes[j].size;
                 
-                nodes[j].force.x -= (dx / d) * push; // * nodes[i].size;
-                nodes[j].force.y -= (dy / d) * push; // * nodes[1].size;
+                nodes[j].force.x -= (dx / d) * push * nodes[i].size;
+                nodes[j].force.y -= (dy / d) * push * nodes[i].size;
             }
             
             // Gentle pull to centre so we don't lose disconnected graphs/nodes
             var dsq = (nodes[i].x * nodes[i].x + nodes[i].y * nodes[i].y);
-            nodes[i].force.x -= nodes[i].x * (dsq / 300000) * nodes[i].size;
-            nodes[i].force.y -= nodes[i].y * (dsq / 300000) * nodes[i].size;
+            var d = Math.sqrt(dsq);
+            nodes[i].force.x -= (nodes[i].x / d) * (dsq / 400) * nodes[i].size;
+            nodes[i].force.y -= (nodes[i].y / d) * (dsq / 400) * nodes[i].size;
         }
         
         for (var i = 0; i < edges.length; i ++)
@@ -119,7 +120,7 @@ function graph_svg(target, nodes, edges)
             var dsq = (dx * dx + dy * dy);
             var d = Math.sqrt(dsq);
             if (dsq > 0.01) dsq = 0.01; // avoid divide-by-zero
-            var push = -dsq * 100;
+            var push = -dsq * 500;
             
             nodes[a].force.x += (dx / d) * push; // / nodes[a].size;
             nodes[a].force.y += (dy / d) * push; // / nodes[a].size;
@@ -137,8 +138,10 @@ function graph_svg(target, nodes, edges)
                 totalSq += nodes[i].force.x * nodes[i].force.x + nodes[i].force.y * nodes[i].force.y;
                 nodes[i].x += nodes[i].force.x;
                 nodes[i].y += nodes[i].force.y;
-                nodes[i].force.x = nodes[i].force.y = 0;
+                if (isNaN(nodes[i].x)) nodes[i].x = 1;
+                if (isNaN(nodes[i].y)) nodes[i].y = 1;
             }
+            nodes[i].force.x = nodes[i].force.y = 0;
         }
         
         //this._stable = totalSq < 0.0001;
@@ -148,7 +151,7 @@ function graph_svg(target, nodes, edges)
         this.update();
         this.render();
     },
-    100);
+    50);
     
     this.render();
 }
