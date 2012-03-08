@@ -1,0 +1,2 @@
+- Make stable threshold dynamic based on number of nodes
+- Reset stability lock at start of drag
