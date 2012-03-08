@@ -128,7 +128,7 @@ function graph_svg(target, nodes, edges)
             nodes[b].force.y -= (dy / d) * push;
         }
         
-        var totalSq = 0;
+        var maxMove = 0;
 
         for (var i = 0; i < nodes.length; i ++)
         {
@@ -139,7 +139,7 @@ function graph_svg(target, nodes, edges)
                 dy = nodes[i].force.y * 10 / nodes[i].size;
                 if (isNaN(dx) || isNaN(dy))
                     continue;
-                totalSq += Math.sqrt(dx * dx + dy * dy);
+                maxMove = Math.max(maxMove, Math.sqrt(dx * dx + dy * dy));
                 nodes[i].x += dx;
                 nodes[i].y += dy;
                 if (isNaN(nodes[i].x)) nodes[i].x = 1;
@@ -148,7 +148,7 @@ function graph_svg(target, nodes, edges)
             nodes[i].force.x = nodes[i].force.y = 0;
         }
         
-        this._stable = totalSq < 5;
+        this._stable = maxMove < 0.1;
     };
     
     this.timer = setInterval(function() { 
