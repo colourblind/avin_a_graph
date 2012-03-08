@@ -64,6 +64,9 @@ function graph_svg(target, nodes, edges)
     }
     
     this._stable = false;
+    this._chargeConstant = 10;
+    this._springConstant = 0.01;
+    this._springEquillibrium = 40;
     
     this.render = function()
     {
@@ -93,21 +96,17 @@ function graph_svg(target, nodes, edges)
                 var dy = nodes[i].y - nodes[j].y;
                 var dsq = (dx * dx + dy * dy);
                 var d = Math.sqrt(dsq);
-                if (dsq > 1) dsq = 1; // avoid divide-by-zero
-                var push = 1 / dsq;
-
-                nodes[i].force.x += (dx / d) * push * nodes[j].size;
-                nodes[i].force.y += (dy / d) * push * nodes[j].size;
+                if (dsq < 0.01) dsq = 0.01; // avoid divide-by-zero
                 
-                nodes[j].force.x -= (dx / d) * push * nodes[i].size;
-                nodes[j].force.y -= (dy / d) * push * nodes[i].size;
+                var charge = nodes[i].size * nodes[j].size;
+                var push = this._chargeConstant * charge / dsq;
+
+                nodes[i].force.x += (dx / d) * push;
+                nodes[i].force.y += (dy / d) * push;
+                
+                nodes[j].force.x -= (dx / d) * push;
+                nodes[j].force.y -= (dy / d) * push;
             }
-            
-            // Gentle pull to centre so we don't lose disconnected graphs/nodes
-            var dsq = (nodes[i].x * nodes[i].x + nodes[i].y * nodes[i].y);
-            var d = Math.sqrt(dsq);
-            nodes[i].force.x -= (nodes[i].x / d) * (dsq / 400) * nodes[i].size;
-            nodes[i].force.y -= (nodes[i].y / d) * (dsq / 400) * nodes[i].size;
         }
         
         for (var i = 0; i < edges.length; i ++)
@@ -117,16 +116,16 @@ function graph_svg(target, nodes, edges)
             
             var dx = nodes[a].x - nodes[b].x;
             var dy = nodes[a].y - nodes[b].y;
-            var dsq = (dx * dx + dy * dy);
-            var d = Math.sqrt(dsq);
-            if (dsq > 0.01) dsq = 0.01; // avoid divide-by-zero
-            var push = -dsq * 500;
+            var d = Math.sqrt(dx * dx + dy * dy);
             
-            nodes[a].force.x += (dx / d) * push; // / nodes[a].size;
-            nodes[a].force.y += (dy / d) * push; // / nodes[a].size;
+            var equillibriumDistance = this._springEquillibrium + nodes[a].size + nodes[b].size;
+            var push = -this._springConstant * (d - equillibriumDistance);
             
-            nodes[b].force.x -= (dx / d) * push; // / nodes[b].size;
-            nodes[b].force.y -= (dy / d) * push; // / nodes[b].size;
+            nodes[a].force.x += (dx / d) * push;
+            nodes[a].force.y += (dy / d) * push;
+            
+            nodes[b].force.x -= (dx / d) * push;
+            nodes[b].force.y -= (dy / d) * push;
         }
         
         var totalSq = 0;
@@ -135,16 +134,21 @@ function graph_svg(target, nodes, edges)
         {
             if (!nodes[i].dragging)
             {
-                totalSq += nodes[i].force.x * nodes[i].force.x + nodes[i].force.y * nodes[i].force.y;
-                nodes[i].x += nodes[i].force.x;
-                nodes[i].y += nodes[i].force.y;
+                var dx, dy;
+                dx = nodes[i].force.x * 10 / nodes[i].size;
+                dy = nodes[i].force.y * 10 / nodes[i].size;
+                if (isNaN(dx) || isNaN(dy))
+                    continue;
+                totalSq += Math.sqrt(dx * dx + dy * dy);
+                nodes[i].x += dx;
+                nodes[i].y += dy;
                 if (isNaN(nodes[i].x)) nodes[i].x = 1;
                 if (isNaN(nodes[i].y)) nodes[i].y = 1;
             }
             nodes[i].force.x = nodes[i].force.y = 0;
         }
         
-        //this._stable = totalSq < 0.0001;
+        this._stable = totalSq < 5;
     };
     
     this.timer = setInterval(function() { 
