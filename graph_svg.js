@@ -43,8 +43,10 @@ function graph_svg(target, nodes, edges)
         }, function() {
             this.ox = nodes[this.index].x;
             this.oy = nodes[this.index].y;
+            nodes[this.index].dragging = true;
             this.attr({fill: '#fff'});
         }, function() {
+            nodes[this.index].dragging = false;
             this.attr({fill: nodes[this.index].colour});        
         });
         c.mouseover(function() { tooltip.innerHTML = nodes[this.index].id; tooltip.style.display = 'block'; });
@@ -92,13 +94,13 @@ function graph_svg(target, nodes, edges)
                 var dsq = (dx * dx + dy * dy);
                 var d = Math.sqrt(dsq);
                 if (dsq > 1) dsq = 1; // avoid divide-by-zero
-                var push = 1 / dsq;
+                var push = 0.5 / dsq;
 
-                nodes[i].force.x += (dx / d) * push;
-                nodes[i].force.y += (dy / d) * push;
+                nodes[i].force.x += (dx / d) * push; // * nodes[j].size;
+                nodes[i].force.y += (dy / d) * push; // * nodes[j].size;
                 
-                nodes[j].force.x -= (dx / d) * push;
-                nodes[j].force.y -= (dy / d) * push;
+                nodes[j].force.x -= (dx / d) * push; // * nodes[i].size;
+                nodes[j].force.y -= (dy / d) * push; // * nodes[1].size;
             }
             
             // Gentle pull to centre so we don't lose disconnected graphs/nodes
@@ -117,23 +119,26 @@ function graph_svg(target, nodes, edges)
             var dsq = (dx * dx + dy * dy);
             var d = Math.sqrt(dsq);
             if (dsq > 0.01) dsq = 0.01; // avoid divide-by-zero
-            var push = -dsq * 500;
+            var push = -dsq * 100;
             
-            nodes[a].force.x += (dx / d) * push / nodes[a].size;
-            nodes[a].force.y += (dy / d) * push / nodes[a].size;
+            nodes[a].force.x += (dx / d) * push; // / nodes[a].size;
+            nodes[a].force.y += (dy / d) * push; // / nodes[a].size;
             
-            nodes[b].force.x -= (dx / d) * push / nodes[b].size;
-            nodes[b].force.y -= (dy / d) * push / nodes[b].size;
+            nodes[b].force.x -= (dx / d) * push; // / nodes[b].size;
+            nodes[b].force.y -= (dy / d) * push; // / nodes[b].size;
         }
         
         var totalSq = 0;
 
         for (var i = 0; i < nodes.length; i ++)
         {
-            totalSq = nodes[i].force.x * nodes[i].force.x + nodes[i].force.y * nodes[i].force.y;
-            nodes[i].x += nodes[i].force.x;
-            nodes[i].y += nodes[i].force.y;
-            nodes[i].force.x = nodes[i].force.y = 0;
+            if (!nodes[i].dragging)
+            {
+                totalSq += nodes[i].force.x * nodes[i].force.x + nodes[i].force.y * nodes[i].force.y;
+                nodes[i].x += nodes[i].force.x;
+                nodes[i].y += nodes[i].force.y;
+                nodes[i].force.x = nodes[i].force.y = 0;
+            }
         }
         
         //this._stable = totalSq < 0.0001;
