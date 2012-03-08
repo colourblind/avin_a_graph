@@ -35,7 +35,6 @@ function graph_svg(target, nodes, edges)
             
         // Create Raphael element
         var c = r.circle(e.x, e.y, e.size + 5).attr({stroke: '#000', fill: e.colour}).translate(250, 250);
-        c.id = e.id;
         c.index = i;
         c.drag(function(dx, dy) {
             nodes[this.index].x = this.ox + dx;
