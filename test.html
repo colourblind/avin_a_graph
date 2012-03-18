@@ -14,7 +14,11 @@
 var g;
 $(document).ready(function()
 {
-    g = graph_svg('bar', nodes, edges);
+    var doc = $(document);
+    var target = $('#bar');
+    target.width(doc.width());
+    target.height(doc.height());
+    g = graph_svg('bar', nodes, edges, target.width(), target.height());
 });
 
 </script>

@@ -1,3 +1,8 @@
+body
+{
+    margin: 0;
+}
+
 #bar
 {
     position: relative;
@@ -5,6 +10,8 @@
 
 #tooltip
 {
+    bottom: 10px;
+    left: 10px;
     position: absolute;
     padding: 1em;
     background-color: #fff;

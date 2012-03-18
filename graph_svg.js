@@ -1,6 +1,6 @@
-function graph_svg(target, nodes, edges)
+function graph_svg(target, nodes, edges, width, height)
 {
-    var r = Raphael(target, 500, 500);
+    var r = Raphael(target, width, height);
     var tooltip = document.getElementById('tooltip');
     
     // Change node ids for indexes in edge list
@@ -34,7 +34,7 @@ function graph_svg(target, nodes, edges)
             e.colour = '#f00';
             
         // Create Raphael element
-        var c = r.circle(e.x, e.y, e.size + 5).attr({stroke: '#000', fill: e.colour}).translate(250, 250);
+        var c = r.circle(e.x, e.y, e.size + 5).attr({stroke: '#000', fill: e.colour}).translate(width / 2, height / 2);
         var g = this;
         c.index = i;
         c.drag(function(dx, dy) {
@@ -60,7 +60,7 @@ function graph_svg(target, nodes, edges)
     {
         var a = nodes[edges[i].a];
         var b = nodes[edges[i].b];
-        var c = r.path('M ' + a.x + ' ' + a.y + ' L ' + b.x + ' ' + b.y).attr({stroke: '#000', 'stroke-width': 2}).translate(250, 250).toBack();
+        var c = r.path('M ' + a.x + ' ' + a.y + ' L ' + b.x + ' ' + b.y).attr({stroke: '#000', 'stroke-width': 2}).translate(width / 2, height / 2).toBack();
         edges[i].drawElement = c;
     }
     
