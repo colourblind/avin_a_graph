@@ -1,2 +1,3 @@
-- Make stable threshold dynamic based on number of nodes
-- Reset stability lock at start of drag
+- Handle window resizing
+- Arrowheads for directed graph edges
+- Zoom and scroll?

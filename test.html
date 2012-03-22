@@ -6,7 +6,7 @@
 
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="Raphael-min.js"></script>
-<script type="text/javascript" src="graph_svg.js"></script>
+<script type="text/javascript" src="avin_a_graph.js"></script>
 <script type="text/javascript" src="data.js"></script>
 
 <script type="text/javascript">
@@ -18,7 +18,7 @@ $(document).ready(function()
     var target = $('#bar');
     target.width(doc.width());
     target.height(doc.height());
-    g = graph_svg('bar', nodes, edges, target.width(), target.height());
+    g = avin_a_graph('bar', nodes, edges, target.width(), target.height());
 });
 
 </script>

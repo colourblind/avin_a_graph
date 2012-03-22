@@ -1,4 +1,4 @@
-function graph_svg(target, nodes, edges, width, height)
+function avin_a_graph(target, nodes, edges, width, height)
 {
     var r = Raphael(target, width, height);
     var tooltip = document.getElementById('tooltip');
