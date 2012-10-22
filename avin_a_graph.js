@@ -1,5 +1,7 @@
 function avin_a_graph(target, nodes, edges, width, height)
 {
+    // TODO: Move to element.matrix for transformations
+
     var r = Raphael(target, width, height);
     var tooltip = document.getElementById('tooltip');
     
@@ -14,7 +16,9 @@ function avin_a_graph(target, nodes, edges, width, height)
                 edges[i].b = j;
         }
     }
- 
+    
+    var g = this;
+    
     for (var i = 0; i < nodes.length; i ++)
     {
         var e = nodes[i];
@@ -35,7 +39,6 @@ function avin_a_graph(target, nodes, edges, width, height)
             
         // Create Raphael element
         var c = r.circle(e.x, e.y, e.size + 5).attr({stroke: '#000', fill: e.colour}).translate(width / 2, height / 2);
-        var g = this;
         c.index = i;
         c.drag(function(dx, dy) {
             nodes[this.index].x = this.ox + dx;
@@ -64,23 +67,39 @@ function avin_a_graph(target, nodes, edges, width, height)
         edges[i].drawElement = c;
     }
     
+    // Create background to trap drag events
+    var bg = r.rect(0, 0, width, height).toBack();
+    bg.attr({fill: '#888'});
+    bg.drag(function(dx, dy) {
+        g._dragPos.x = dx;
+        g._dragPos.y = dy;
+    }, function() {
+        // Meh
+    }, function() {
+        g._canvasPos.x += g._dragPos.x;
+        g._canvasPos.y += g._dragPos.y
+        g._dragPos = { x: 0, y: 0 };
+    });
+    
     this._stable = false;
     this._chargeConstant = 10;
     this._springConstant = 0.01;
     this._springEquillibrium = 40;
-    
+    this._canvasPos = { x: 0, y: 0 };
+    this._dragPos = { x: 0, y: 0 };
+        
     this.render = function()
     {
         for (var i = 0; i < edges.length; i ++)
         {
             var a = nodes[edges[i].a];
             var b = nodes[edges[i].b];
-            edges[i].drawElement.attr('path', 'M ' + a.x + ' ' + a.y + ' L ' + b.x + ' ' + b.y);
+            edges[i].drawElement.attr('path', 'M ' + (a.x + this._canvasPos.x + this._dragPos.x) + ' ' + (a.y + this._canvasPos.y + this._dragPos.y) + ' L ' + (b.x + this._canvasPos.x + this._dragPos.x) + ' ' + (b.y + this._canvasPos.y + this._dragPos.y));
         }
         for (var i = 0; i < nodes.length; i ++)
         {
-            nodes[i].drawElement.attr('cx', nodes[i].x);
-            nodes[i].drawElement.attr('cy', nodes[i].y);
+            nodes[i].drawElement.attr('cx', nodes[i].x + this._canvasPos.x + this._dragPos.x);
+            nodes[i].drawElement.attr('cy', nodes[i].y + this._canvasPos.y + this._dragPos.y);
         }
     };
     
