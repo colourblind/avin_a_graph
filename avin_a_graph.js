@@ -81,25 +81,37 @@ function avin_a_graph(target, nodes, edges, width, height)
         g._dragPos = { x: 0, y: 0 };
     });
     
+    // Mouse wheel for zoom!
+    $(bg.node).mousewheel(function(event, delta, deltaX, deltaY) {
+        g._zoom *= 1 + deltaY / 10;
+    });
+    
     this._stable = false;
     this._chargeConstant = 10;
     this._springConstant = 0.01;
     this._springEquillibrium = 40;
     this._canvasPos = { x: 0, y: 0 };
     this._dragPos = { x: 0, y: 0 };
+    this._zoom = 1;
         
     this.render = function()
     {
+        var globalTransform = Raphael.matrix();
+        globalTransform.translate(this._canvasPos.x + this._dragPos.x + width / 2, this._canvasPos.y + this._dragPos.y + height / 2);
+        globalTransform.scale(this._zoom, this._zoom);
+        var transformStr = globalTransform.toTransformString();
         for (var i = 0; i < edges.length; i ++)
         {
             var a = nodes[edges[i].a];
             var b = nodes[edges[i].b];
-            edges[i].drawElement.attr('path', 'M ' + (a.x + this._canvasPos.x + this._dragPos.x) + ' ' + (a.y + this._canvasPos.y + this._dragPos.y) + ' L ' + (b.x + this._canvasPos.x + this._dragPos.x) + ' ' + (b.y + this._canvasPos.y + this._dragPos.y));
+            edges[i].drawElement.attr('path', 'M ' + (a.x) + ' ' + (a.y) + ' L ' + (b.x) + ' ' + (b.y));
+            edges[i].drawElement.transform(transformStr);
         }
         for (var i = 0; i < nodes.length; i ++)
         {
-            nodes[i].drawElement.attr('cx', nodes[i].x + this._canvasPos.x + this._dragPos.x);
-            nodes[i].drawElement.attr('cy', nodes[i].y + this._canvasPos.y + this._dragPos.y);
+            nodes[i].drawElement.attr('cx', nodes[i].x);
+            nodes[i].drawElement.attr('cy', nodes[i].y);
+            nodes[i].drawElement.transform(transformStr);
         }
     };
     
